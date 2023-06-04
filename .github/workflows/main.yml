@@ -13,10 +13,7 @@ jobs:
           go-version: 1.16
       - name: Build
         working-directory: app
-        run: go build -v main.go
-      - name: Zip
-        working-directory: app
-        run: zip -j deploy.zip main
+        run: make zip
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -25,4 +22,4 @@ jobs:
           aws-region: eu-central-1
       - name: Upload Zip
         working-directory: app
-        run: aws lambda update-function-code --function-name diet-bot --zip-file fileb://deploy.zip
+        run: aws lambda update-function-code --function-name diet-bot --zip-file fileb://main.zip
