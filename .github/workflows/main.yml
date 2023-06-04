@@ -1,34 +1,28 @@
 name: deploy to lambda
 on: [push]
 jobs:
-
-  deploy_zip:
-    name: deploy lambda function
+  Deploy:
+    name: Deploy
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        go-version: [1.20.x]
     steps:
-      - name: checkout source code
+      - name: Checkout
         uses: actions/checkout@v3
-      - name: Install Go
-        uses: actions/setup-go@v1
+      - name: Set up Go
+        uses: actions/setup-go@v3
         with:
-          go-version: ${{ matrix.go-version }}
-      - name: Build binary
-        run: |
-          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -a -o main main.go && zip deployment.zip main
-      - name: default deploy
-        uses: appleboy/lambda-action@v0.1.9
+          go-version: 1.16
+      - name: Build
+        working-directory: ./lambda/diet-bot
+        run: go build -v main.go
+      - name: Zip
+        working-directory: ./lambda/diet-bot
+        run: zip -j deploy.zip main
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws_region: us-east-1
-          function_name: diet-bot
-          zip_file: deployment.zip
-          memory_size: 128
-          timeout: 10
-          handler: main
-          role: arn:aws:iam::999331975858:user/github
-          runtime: go1.x
-          environment: test=01
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+      - name: Upload Zip
+        working-directory: ./lambda/diet-bot
+        run: aws lambda update-function-code --function-name diet-bot --zip-file fileb://deploy.zip
