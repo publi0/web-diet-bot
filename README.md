@@ -2,7 +2,9 @@
 
 Chatbot do Telegram para fazer o registro alimentar de maneira mais pratica :)
 
-![RPReplay_Final1685981398_AdobeExpress](https://github.com/publi0/web-diet-bot/assets/14155185/2b0a7d8a-8389-40d3-be5a-9d536381fc7d)
+![RPReplay_Final1685981398_AdobeExpress](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExYmE0NGM2MmIwYjkxY2U2NDE5OGM3NjgzZGQzZWY0YjY3Zjk2MDYwNyZlcD12MV9pbnRlcm5hbF9naWZzX2dpZklkJmN0PWc/z9pwTAuY2md40jfq5x/giphy.gif)
+
+
 
 
 ### Envs
