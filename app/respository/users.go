@@ -12,6 +12,7 @@ type API interface {
 	UserIsActive(user string) (bool, error)
 	FindUser(user string) (*model.User, error)
 	UpdateUserPhoto(user string, base64photo string) error
+	UpdateUserAuth(user, n, p string) error
 }
 
 type Repository struct {
@@ -23,7 +24,7 @@ func (r Repository) UserIsActive(user string) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	return findUser != nil, nil
+	return findUser != nil || findUser.Id != "", nil
 }
 
 func (r Repository) FindUser(user string) (*model.User, error) {
@@ -69,5 +70,36 @@ func (r Repository) UpdateUserPhoto(user string, base64photo string) error {
 		return err
 	}
 	log.Println("user photo saved")
+	return nil
+}
+
+func (r Repository) UpdateUserAuth(user, n, p string) error {
+	object := model.WebDietAuth{
+		N: n,
+		P: p,
+	}
+
+	value, _ := dynamodbattribute.MarshalMap(object)
+	putItemInput := dynamodb.UpdateItemInput{
+		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
+			":n": {
+				M: value,
+			},
+		},
+		TableName: aws.String("Users"),
+		Key: map[string]*dynamodb.AttributeValue{
+			"Id": {
+				S: aws.String(user),
+			},
+		},
+		ReturnValues:     aws.String("UPDATED_NEW"),
+		UpdateExpression: aws.String("set Auth = :n"),
+	}
+	_, err := r.Db.UpdateItem(&putItemInput)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	log.Println("user auth saved")
 	return nil
 }

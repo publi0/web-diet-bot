@@ -2,6 +2,7 @@ package validation_chain
 
 import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"log"
 	"strconv"
 	"web-diet-bot/dto"
 	"web-diet-bot/respository"
@@ -34,6 +35,7 @@ func (v *ValidateUserAction) Execute(event *dto.Event) {
 	if !active {
 		msg = tgbotapi.NewMessage(messageId, "Vocë ainda não está cadastrado em nossa base! 🥹")
 		v.Bot.Send(msg)
+		log.Println("User info: ", event.Message.From)
 		return
 	}
 	v.next.Execute(event)

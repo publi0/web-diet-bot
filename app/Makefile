@@ -11,3 +11,4 @@ zip: build
 deploy: zip
 	aws lambda update-function-code --function-name diete-bot --zip-file fileb://main.zip
 	rm main.zip
+	@echo "deployed!"
